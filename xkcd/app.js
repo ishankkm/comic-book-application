@@ -51,15 +51,5 @@ app.get('/smbc', function (req, resp) {
 
 })
 
-app.get('/butsaf', function (req, resp) {
-
-  Feed.load('http://feeds.feedburner.com/Buttersafe?format=xml', function(err, rss){
-      // rss.items.forEach(function(item) {
-      //   item.description = formatImg2(item.description)
-      // });
-      resp.send(rss);
-  });
-
-})
 
 app.listen(5000, () => console.log('app listening on port 5000!'))
