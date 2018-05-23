@@ -16,7 +16,18 @@ function formatImg(str) {
   return imgTag
 }
 
-app.get('/', function (req, resp) {
+function formatImg2(str) {
+  var reImg = /<img[^>]*>/g
+  strImg = str.match(reImg)[0].replace("\\\"", "\"").split("\"");
+
+  var reTit = /<br><br>Hovertext: <br>.*<br><br>/g
+  strTit = str.match(reTit)[0].slice(23, -8)
+
+  imgTag = {"img": strImg[1], "title": strTit, "alt":strTit}
+  return imgTag
+}
+
+app.get('/xkcd', function (req, resp) {
 
   Feed.load('https://xkcd.com/rss.xml', function(err, rss){
 
@@ -24,6 +35,28 @@ app.get('/', function (req, resp) {
         item.description = formatImg(item.description)
       });
 
+      resp.send(rss);
+  });
+
+})
+
+app.get('/smbc', function (req, resp) {
+
+  Feed.load('https://www.smbc-comics.com/rss.php', function(err, rss){
+      rss.items.forEach(function(item) {
+        item.description = formatImg2(item.description)
+      });
+      resp.send(rss);
+  });
+
+})
+
+app.get('/butsaf', function (req, resp) {
+
+  Feed.load('http://feeds.feedburner.com/Buttersafe?format=xml', function(err, rss){
+      // rss.items.forEach(function(item) {
+      //   item.description = formatImg2(item.description)
+      // });
       resp.send(rss);
   });
 

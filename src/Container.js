@@ -7,10 +7,13 @@ class Container extends Component {
     this.state = {
       error: null,
       isLoaded: false,
-      items: []
+      items: [],
+      comic: "xkcd"
     }
 
     this.buildCards = this.buildCards.bind(this)
+    this.fetchItems = this.fetchItems.bind(this)
+    this.changeComic = this.changeComic.bind(this)
   }
 
   buildCards(items) {
@@ -26,13 +29,17 @@ class Container extends Component {
   }
 
   componentDidMount() {
-    
-    fetch("http://"+ window.location.hostname + ":5000")
+      this.fetchItems("xkcd")
+  }
+
+  fetchItems(type){
+    fetch("http://"+ window.location.hostname + ":5000/" + type)
       .then(res => res.json())
       .then((result) => {
           this.setState({
             isLoaded: true,
-            items: []
+            items: [],
+            comic: type
           });
           this.buildCards(result.items)
         },
@@ -45,6 +52,11 @@ class Container extends Component {
       )
   }
 
+  changeComic(e) {
+    console.log(e.target.id);
+    this.fetchItems(e.target.id)
+  }
+
   render () {
     const { error, isLoaded, items } = this.state;
     if (error) {
@@ -53,9 +65,28 @@ class Container extends Component {
       return <div>Loading...</div>;
     } else {
       return (
+        <div>
+          <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a className="navbar-brand" href="">Comics</a>
+            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+
+            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul className="navbar-nav mr-auto">
+                <li className="nav-item">
+                  <button className="btn btn-sm btn-outline-secondary" id="xkcd" type="button" onClick={this.changeComic}>XKCD</button>
+                </li>
+                <li className="nav-item">
+                  <button className="btn btn-sm btn-outline-secondary" id="smbc" type="button" onClick={this.changeComic}>SMBC</button>
+                </li>
+              </ul>
+            </div>
+          </nav>
         <div className="container">
-          <div className="card-columns">{items}</div>
+          <div className="card-columns mt-3">{items}</div>
         </div>
+      </div>
       )
     }
   }
